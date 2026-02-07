@@ -1,10 +1,28 @@
 #!/data/data/com.termux/files/usr/bin/bash
-pkg update -y
-pkg install python git -y
-pip install -r requirements.txt
-chmod +x osintv5.sh
-pip install maigret
-pip install holehe
 
+echo "[+] Updating packages..."
+pkg update -y
+pkg upgrade -y
+
+echo "[+] Installing dependencies..."
+pkg install python git -y
+
+echo "[+] Upgrading pip..."
+pip install --upgrade pip
+
+echo "[+] Installing Python requirements..."
+pip install -r requirements.txt
+
+echo "[+] Installing external tools..."
+pip install maigret holehe
+
+echo "[+] Creating folders..."
+mkdir -p reports
+
+chmod +x osintv5.sh
+
+echo ""
 echo "[+] Install selesai"
-echo "run :  bash osintv5.sh"
+echo "[+] Jalankan dengan:"
+echo "bash osintv5.sh"
+
