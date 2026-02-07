@@ -22,7 +22,7 @@ elif c == "2":
     print(result)
 
 elif c == "3":
-    phone = input("Phone Telegram: ")
+    phone = input("Phone Telegram: +62xxx ")
     result = telegram_lookup(phone)
     print(result)
 
