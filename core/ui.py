@@ -11,8 +11,8 @@ def menu():
 [1] Phone Intelligence
 [2] Username Scanner
 [3] Telegram Intelligence
-[4] Link Tracker
-[5] Inspector
+[4] Maigret (Username)
+[5] Holohe (Email)
 [6] Generate HTML Report
 [0] Exit
 """)
