@@ -1,5 +1,5 @@
 import requests
-import concurrent.futures
+import time
 from datetime import datetime
 
 username = input("Masukkan username: ")
@@ -9,33 +9,41 @@ sites = {
     "GitHub": f"https://github.com/{username}",
     "TikTok": f"https://www.tiktok.com/@{username}",
     "Twitter": f"https://twitter.com/{username}",
-    "Pinterest": f"https://www.pinterest.com/{username}"
+    "Pinterest": f"https://www.pinterest.com/{username}",
+    "Reddit": f"https://www.reddit.com/user/{username}",
+    "Medium": f"https://medium.com/@{username}"
 }
 
 results = []
-
-def check(site, url):
-    try:
-        r = requests.get(url, timeout=5)
-        if r.status_code == 200:
-            result = f"[FOUND] {site} -> {url}"
-        else:
-            result = f"[NOT FOUND] {site}"
-    except:
-        result = f"[ERROR] {site}"
-    print(result)
-    results.append(result)
+total = len(sites)
+count = 0
 
 print("\nScanning...\n")
 
-with concurrent.futures.ThreadPoolExecutor() as executor:
-    for site, url in sites.items():
-        executor.submit(check, site, url)
+for site, url in sites.items():
+    try:
+        r = requests.get(url, timeout=5)
+        status = "FOUND" if r.status_code == 200 else "NOT FOUND"
+    except:
+        status = "ERROR"
 
-# save report
-filename = f"reports/username_{username}_{datetime.now().strftime('%H%M%S')}.txt"
+    result = f"{site} : {status} : {url}"
+    print(result)
+    results.append(result)
+
+    count += 1
+    progress = int((count/total)*30)
+    bar = "[" + "#"*progress + "-"*(30-progress) + "]"
+    print(bar)
+    time.sleep(0.3)
+
+# Save HTML report
+filename = f"reports/username_{username}.html"
+
 with open(filename, "w") as f:
+    f.write("<html><body><h2>OSINT Report</h2><ul>")
     for r in results:
-        f.write(r + "\n")
+        f.write(f"<li>{r}</li>")
+    f.write("</ul></body></html>")
 
-print(f"\nReport saved: {filename}")
+print("\nReport saved:", filename)
