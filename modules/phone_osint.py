@@ -1,11 +1,26 @@
 import requests
 
-api_key = input("b82a9f21278d466c5251a0f384ce432b")
-phone = input("Nomor HP: ")
+print("\nOSINT Nomor HP\n")
 
-url = f"http://apilayer.net/api/validate?access_key={api_key}&number={phone}"
+api_key = input("b82a9f21278d466c5251a0f384ce432b").strip()
+phone = input("Nomor HP (contoh 628xxxx) : ").strip()
 
-data = requests.get(url).json()
+url = "http://apilayer.net/api/validate"
 
-for k,v in data.items():
-    print(f"{k} : {v}")
+params = {
+    "access_key": api_key,
+    "number": phone,
+    "country_code": "",
+    "format": 1
+}
+
+try:
+    response = requests.get(url, params=params)
+    data = response.json()
+
+    print("\n===== HASIL =====")
+    for k, v in data.items():
+        print(f"{k} : {v}")
+
+except Exception as e:
+    print("Error:", e)
