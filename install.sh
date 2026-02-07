@@ -1,15 +1,12 @@
 #!/bin/bash
 
-echo "Installing OsintV3..."
-
 pkg update -y
 pkg install python git -y
-
 pip install requests
 
 mkdir reports
 
-chmod +x osintv2.sh
+chmod +x osintv4.sh
 
 echo "Install selesai"
-echo "Run: bash osintv2.sh"
+echo "Run : bash osintv4.sh"
