@@ -13,9 +13,6 @@ pip install --upgrade pip
 echo "[+] Installing Python requirements..."
 pip install -r requirements.txt
 
-echo "[+] Installing external tools..."
-pip install maigret holehe
-
 echo "[+] Creating folders..."
 mkdir -p reports
 
