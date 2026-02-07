@@ -3,6 +3,7 @@
 pkg update -y
 pkg install python git -y
 pip install requests
+pip install requests colorama
 
 mkdir reports
 
