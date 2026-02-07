@@ -1,5 +1,11 @@
 import os
+import shutil
+
+def ensure_holehe():
+    if shutil.which("holehe") is None:
+        print("[+] Holehe belum terinstall, installing...")
+        os.system("pip install holehe")
 
 def run(email):
-    print("\n[+] Running Holehe...\n")
+    ensure_holehe()
     os.system(f"holehe {email}")
