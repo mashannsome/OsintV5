@@ -5,93 +5,92 @@ from colorama import Fore, Style, init
 
 init(autoreset=True)
 
-print(Fore.CYAN + "\n========== PHONE OSINT ELITE by Mashannsome ==========\n")
-
 numverify_key = ("b82a9f21278d466c5251a0f384ce432b")
 abstract_key = ("cea4b8ce437d453c968fe48390a5976e")
-phone = input("Nomor HP (contoh 628xxxx): ").strip()
 
-hasil = {}
 
-# ======================
-# API 1 : Numverify
-# ======================
-if numverify_key:
-    try:
-        url = f"https://api.apilayer.com/numverify/validate?number={phone}"
-        headers = {"apikey": numverify_key}
-        res = requests.get(url, headers=headers, timeout=10)
-        data = res.json()
+def scan(phone):
+    print(Fore.CYAN + "\n========== PHONE OSINT ELITE ==========\n")
 
-        if data.get("valid"):
-            hasil = {
-                "Valid": data.get("valid"),
-                "Nomor": data.get("international_format"),
-                "Negara": data.get("country_name"),
-                "Kode Negara": data.get("country_code"),
-                "Lokasi": data.get("location") or "Tidak tersedia",
-                "Operator": data.get("carrier") or "Tidak tersedia",
-                "Tipe Line": data.get("line_type") or "Tidak tersedia",
-                "Sumber": "Numverify"
-            }
-    except:
-        pass
+    hasil = {}
 
-# ======================
-# API 2 : AbstractAPI (fallback)
-# ======================
-if not hasil and abstract_key:
-    try:
-        url = f"https://phonevalidation.abstractapi.com/v1/?api_key={abstract_key}&phone={phone}"
-        data = requests.get(url, timeout=10).json()
+    # ======================
+    # API 1 : Numverify
+    # ======================
+    if numverify_key:
+        try:
+            url = f"https://api.apilayer.com/numverify/validate?number={phone}"
+            headers = {"apikey": numverify_key}
+            res = requests.get(url, headers=headers, timeout=10)
+            data = res.json()
 
-        if data.get("valid"):
-            hasil = {
-                "Valid": data.get("valid"),
-                "Nomor": data.get("format", {}).get("international"),
-                "Negara": data.get("country", {}).get("name"),
-                "Kode Negara": data.get("country", {}).get("code"),
-                "Lokasi": data.get("location") or "Tidak tersedia",
-                "Operator": data.get("carrier") or "Tidak tersedia",
-                "Tipe Line": data.get("type") or "Tidak tersedia",
-                "Sumber": "AbstractAPI"
-            }
-    except:
-        pass
+            if data.get("valid"):
+                hasil = {
+                    "Valid": data.get("valid"),
+                    "Nomor": data.get("international_format"),
+                    "Negara": data.get("country_name"),
+                    "Kode Negara": data.get("country_code"),
+                    "Lokasi": data.get("location") or "Tidak tersedia",
+                    "Operator": data.get("carrier") or "Tidak tersedia",
+                    "Tipe Line": data.get("line_type") or "Tidak tersedia",
+                    "Sumber": "Numverify"
+                }
+        except:
+            pass
 
-# ======================
-# OUTPUT
-# ======================
-if not hasil:
-    print(Fore.RED + "\nGagal mendapatkan data dari semua API\n")
-    exit()
+    # ======================
+    # API 2 : AbstractAPI
+    # ======================
+    if not hasil and abstract_key:
+        try:
+            url = f"https://phonevalidation.abstractapi.com/v1/?api_key={abstract_key}&phone={phone}"
+            data = requests.get(url, timeout=10).json()
 
-print(Fore.GREEN + "\n========== HASIL ==========\n")
+            if data.get("valid"):
+                hasil = {
+                    "Valid": data.get("valid"),
+                    "Nomor": data.get("format", {}).get("international"),
+                    "Negara": data.get("country", {}).get("name"),
+                    "Kode Negara": data.get("country", {}).get("code"),
+                    "Lokasi": data.get("location") or "Tidak tersedia",
+                    "Operator": data.get("carrier") or "Tidak tersedia",
+                    "Tipe Line": data.get("type") or "Tidak tersedia",
+                    "Sumber": "AbstractAPI"
+                }
+        except:
+            pass
 
-for k, v in hasil.items():
-    print(Fore.YELLOW + f"{k:<15}: " + Fore.WHITE + f"{v}")
+    if not hasil:
+        print(Fore.RED + "\nGagal mendapatkan data dari semua API\n")
+        return None
 
-# ======================
-# SAVE REPORT
-# ======================
-os.makedirs("reports", exist_ok=True)
+    print(Fore.GREEN + "\n========== HASIL ==========\n")
 
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-
-txt_file = f"reports/phone_{phone}_{timestamp}.txt"
-html_file = f"reports/phone_{phone}_{timestamp}.html"
-
-# TXT
-with open(txt_file, "w") as f:
     for k, v in hasil.items():
-        f.write(f"{k}: {v}\n")
+        print(Fore.YELLOW + f"{k:<15}: " + Fore.WHITE + f"{v}")
 
-# HTML
-with open(html_file, "w") as f:
-    f.write("<html><body><h2>PHONE OSINT REPORT</h2><table border='1'>")
-    for k, v in hasil.items():
-        f.write(f"<tr><td>{k}</td><td>{v}</td></tr>")
-    f.write("</table></body></html>")
+    # ======================
+    # SAVE REPORT
+    # ======================
+    os.makedirs("reports", exist_ok=True)
 
-print(Fore.CYAN + f"\nReport TXT  : {txt_file}")
-print(Fore.CYAN + f"Report HTML : {html_file}")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    txt_file = f"reports/phone_{phone}_{timestamp}.txt"
+    html_file = f"reports/phone_{phone}_{timestamp}.html"
+
+    with open(txt_file, "w") as f:
+        for k, v in hasil.items():
+            f.write(f"{k}: {v}\n")
+
+    with open(html_file, "w") as f:
+        f.write("<html><body><h2>PHONE OSINT REPORT</h2><table border='1'>")
+        for k, v in hasil.items():
+            f.write(f"<tr><td>{k}</td><td>{v}</td></tr>")
+        f.write("</table></body></html>")
+
+    print(Fore.CYAN + f"\nReport TXT  : {txt_file}")
+    print(Fore.CYAN + f"Report HTML : {html_file}")
+
+    return hasil
+
