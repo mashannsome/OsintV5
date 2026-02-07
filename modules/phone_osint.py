@@ -1,26 +1,97 @@
 import requests
+from datetime import datetime
+import os
+from colorama import Fore, Style, init
 
-print("\nOSINT Nomor HP\n")
+init(autoreset=True)
 
-api_key = input("b82a9f21278d466c5251a0f384ce432b").strip()
-phone = input("Nomor HP (contoh 628xxxx) : ").strip()
+print(Fore.CYAN + "\n========== PHONE OSINT ELITE ==========\n")
 
-url = "http://apilayer.net/api/validate"
+numverify_key = ("b82a9f21278d466c5251a0f384ce432b")
+abstract_key = ("cea4b8ce437d453c968fe48390a5976e")
+phone = input("Nomor HP (contoh 628xxxx): ").strip()
 
-params = {
-    "access_key": api_key,
-    "number": phone,
-    "country_code": "",
-    "format": 1
-}
+hasil = {}
 
-try:
-    response = requests.get(url, params=params)
-    data = response.json()
+# ======================
+# API 1 : Numverify
+# ======================
+if numverify_key:
+    try:
+        url = f"https://api.apilayer.com/numverify/validate?number={phone}"
+        headers = {"apikey": numverify_key}
+        res = requests.get(url, headers=headers, timeout=10)
+        data = res.json()
 
-    print("\n===== HASIL =====")
-    for k, v in data.items():
-        print(f"{k} : {v}")
+        if data.get("valid"):
+            hasil = {
+                "Valid": data.get("valid"),
+                "Nomor": data.get("international_format"),
+                "Negara": data.get("country_name"),
+                "Kode Negara": data.get("country_code"),
+                "Lokasi": data.get("location") or "Tidak tersedia",
+                "Operator": data.get("carrier") or "Tidak tersedia",
+                "Tipe Line": data.get("line_type") or "Tidak tersedia",
+                "Sumber": "Numverify"
+            }
+    except:
+        pass
 
-except Exception as e:
-    print("Error:", e)
+# ======================
+# API 2 : AbstractAPI (fallback)
+# ======================
+if not hasil and abstract_key:
+    try:
+        url = f"https://phonevalidation.abstractapi.com/v1/?api_key={abstract_key}&phone={phone}"
+        data = requests.get(url, timeout=10).json()
+
+        if data.get("valid"):
+            hasil = {
+                "Valid": data.get("valid"),
+                "Nomor": data.get("format", {}).get("international"),
+                "Negara": data.get("country", {}).get("name"),
+                "Kode Negara": data.get("country", {}).get("code"),
+                "Lokasi": data.get("location") or "Tidak tersedia",
+                "Operator": data.get("carrier") or "Tidak tersedia",
+                "Tipe Line": data.get("type") or "Tidak tersedia",
+                "Sumber": "AbstractAPI"
+            }
+    except:
+        pass
+
+# ======================
+# OUTPUT
+# ======================
+if not hasil:
+    print(Fore.RED + "\nGagal mendapatkan data dari semua API\n")
+    exit()
+
+print(Fore.GREEN + "\n========== HASIL ==========\n")
+
+for k, v in hasil.items():
+    print(Fore.YELLOW + f"{k:<15}: " + Fore.WHITE + f"{v}")
+
+# ======================
+# SAVE REPORT
+# ======================
+os.makedirs("reports", exist_ok=True)
+
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+txt_file = f"reports/phone_{phone}_{timestamp}.txt"
+html_file = f"reports/phone_{phone}_{timestamp}.html"
+
+# TXT
+with open(txt_file, "w") as f:
+    for k, v in hasil.items():
+        f.write(f"{k}: {v}\n")
+
+# HTML
+with open(html_file, "w") as f:
+    f.write("<html><body><h2>PHONE OSINT REPORT</h2><table border='1'>")
+    for k, v in hasil.items():
+        f.write(f"<tr><td>{k}</td><td>{v}</td></tr>")
+    f.write("</table></body></html>")
+
+print(Fore.CYAN + f"\nReport TXT  : {txt_file}")
+print(Fore.CYAN + f"Report HTML : {html_file}")
