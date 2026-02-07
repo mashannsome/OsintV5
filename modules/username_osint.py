@@ -2,7 +2,7 @@ import requests
 import concurrent.futures
 import os
 from datetime import datetime
-
+from core.reporter import save
 
 def scan(username):
     print("\nScanning username...\n")
@@ -68,3 +68,5 @@ def scan(username):
     print("\nReport saved:", file_html)
 
     return results
+    save(results, "Username Scan")
+
