@@ -1,16 +1,15 @@
-# OsintV3
-
-Tools OSINT berbasis Termux.
+# OsintV4 Elite
 
 Features:
 - Phone OSINT
-- Username OSINT multi-thread
-- IP Inspector
-- Auto report
-- Auto detect modules
+- Username OSINT
+- Inspector IP
+- HTML Report
+- Progress bar
+- Update checker
 
 Install:
 bash install.sh
 
 Run:
-bash osintv2.sh
+bash osintv4.sh
