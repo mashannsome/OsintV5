@@ -5,7 +5,7 @@ from colorama import Fore, Style, init
 
 init(autoreset=True)
 
-print(Fore.CYAN + "\n========== PHONE OSINT ELITE ==========\n")
+print(Fore.CYAN + "\n========== PHONE OSINT ELITE by Mashannsome ==========\n")
 
 numverify_key = ("b82a9f21278d466c5251a0f384ce432b")
 abstract_key = ("cea4b8ce437d453c968fe48390a5976e")
